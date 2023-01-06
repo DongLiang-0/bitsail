@@ -45,8 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.bytedance.bitsail.connector.selectdb.sink.streamload.LoadStatus.FAIL;
-import static com.bytedance.bitsail.connector.selectdb.sink.streamload.LoadStatus.SUCCESS;
+import static com.bytedance.bitsail.connector.selectdb.sink.uploadload.LoadStatus.FAIL;
+import static com.bytedance.bitsail.connector.selectdb.sink.uploadload.LoadStatus.SUCCESS;
 import static org.apache.http.HttpStatus.SC_OK;
 
 @NoArgsConstructor

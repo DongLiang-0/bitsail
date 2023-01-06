@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bytedance.bitsail.connector.selectdb.sink.streamload;
+package com.bytedance.bitsail.connector.selectdb.sink.uploadload;
 
 public class LoadStatus {
   public static final int SUCCESS = 0;

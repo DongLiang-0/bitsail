@@ -22,7 +22,7 @@ import com.bytedance.bitsail.connector.selectdb.config.SelectdbOptions;
 import com.bytedance.bitsail.connector.selectdb.copyinto.CopySQLBuilder;
 import com.bytedance.bitsail.connector.selectdb.sink.SelectdbWriterState;
 import com.bytedance.bitsail.connector.selectdb.sink.label.LabelGenerator;
-import com.bytedance.bitsail.connector.selectdb.sink.streamload.SelectdbStreamLoad;
+import com.bytedance.bitsail.connector.selectdb.sink.uploadload.SelectdbUploadLoad;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.flink.util.Preconditions;
@@ -59,7 +59,7 @@ public class SelectdbUpsertProxy extends AbstractDorisWriteModeProxy {
     this.labelGenerator = new LabelGenerator(executionOptions.getLabelPrefix());
     this.fileNum = new AtomicInteger();
     this.lineDelimiter = selectdbOptions.getLineDelimiter().getBytes(StandardCharsets.UTF_8);
-    this.selectdbStreamLoad = new SelectdbStreamLoad(executionOptions, selectdbOptions);
+    this.selectdbUploadLoad = new SelectdbUploadLoad(executionOptions, selectdbOptions);
   }
 
   @Override
@@ -70,7 +70,7 @@ public class SelectdbUpsertProxy extends AbstractDorisWriteModeProxy {
         LOG.info("start load by cache full, cnt {}, size {}", cacheCnt, cacheSize);
         startLoad();
       }
-      selectdbStreamLoad.writeRecord(bytes);
+      selectdbUploadLoad.writeRecord(bytes);
     } else {
       cacheSize += bytes.length;
       cacheCnt++;
@@ -85,7 +85,7 @@ public class SelectdbUpsertProxy extends AbstractDorisWriteModeProxy {
   @Override
   public List<SelectdbCommittable> prepareCommit() throws IOException {
     // disable exception checker before stop load.
-    Preconditions.checkState(selectdbStreamLoad != null);
+    Preconditions.checkState(selectdbUploadLoad != null);
     if (!loading) {
       //No data was written during the entire checkpoint period
       LOG.info("start load by checkpoint, cnt {} size {} ", cacheCnt, cacheSize);
@@ -93,25 +93,25 @@ public class SelectdbUpsertProxy extends AbstractDorisWriteModeProxy {
     }
     LOG.info("stop load by checkpoint");
     stopLoad();
-    CopySQLBuilder copySQLBuilder = new CopySQLBuilder(selectdbOptions, executionOptions, selectdbStreamLoad.getFileList());
+    CopySQLBuilder copySQLBuilder = new CopySQLBuilder(selectdbOptions, executionOptions, selectdbUploadLoad.getFileList());
     String copySql = copySQLBuilder.buildCopySQL();
-    return ImmutableList.of(new SelectdbCommittable(selectdbStreamLoad.getHostPort(), selectdbOptions.getClusterName(), copySql));
+    return ImmutableList.of(new SelectdbCommittable(selectdbUploadLoad.getHostPort(), selectdbOptions.getClusterName(), copySql));
   }
 
   @Override
   public List<SelectdbWriterState> snapshotState(long checkpointId) {
-    Preconditions.checkState(selectdbStreamLoad != null);
+    Preconditions.checkState(selectdbUploadLoad != null);
     this.checkpointId = checkpointId + 1;
 
-    LOG.info("clear the file list {}", selectdbStreamLoad.getFileList());
+    LOG.info("clear the file list {}", selectdbUploadLoad.getFileList());
     this.fileNum.set(0);
-    selectdbStreamLoad.clearFileList();
+    selectdbUploadLoad.clearFileList();
     return Collections.singletonList(selectdbWriterState);
   }
 
   private synchronized void startLoad() throws IOException {
     // If not started writing, make a streaming request
-    this.selectdbStreamLoad.startLoad(labelGenerator.generateLabel(checkpointId, fileNum.getAndIncrement()));
+    this.selectdbUploadLoad.startLoad(labelGenerator.generateLabel(checkpointId, fileNum.getAndIncrement()));
     if (!cache.isEmpty()) {
       // add line delimiter
       ByteBuffer buf = ByteBuffer.allocate(cacheSize + (cache.size() - 1) * lineDelimiter.length);
@@ -121,14 +121,14 @@ public class SelectdbUpsertProxy extends AbstractDorisWriteModeProxy {
         }
         buf.put(cache.get(i));
       }
-      this.selectdbStreamLoad.writeRecord(buf.array());
+      this.selectdbUploadLoad.writeRecord(buf.array());
     }
     this.loading = true;
   }
 
   private synchronized void stopLoad() throws IOException {
     this.loading = false;
-    this.selectdbStreamLoad.stopLoad();
+    this.selectdbUploadLoad.stopLoad();
     this.cacheSize = 0;
     this.cacheCnt = 0;
     this.cache.clear();

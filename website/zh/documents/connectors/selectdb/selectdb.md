@@ -90,4 +90,4 @@ Selectdb 写连接器使用json或者csv格式传输数据，支持的数据类�
 
 配置示例文档: [selectdb-connector-example](./selectdb-example.md)
 
-SelectDB 云数仓：[selectdb](https://cn.selectdb.com/)
+SelectDB Cloud: [selectdb](https://cn.selectdb.com/)

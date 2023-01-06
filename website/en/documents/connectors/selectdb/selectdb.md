@@ -92,4 +92,4 @@ it, for example:
 
 Configuration examples: [selectdb-connector-example](./selectdb-example.md)
 
-SelectDB cloud data warehouse：[selectdb](https://cn.selectdb.com/)
+SelectDB Cloud: [selectdb](https://cn.selectdb.com/)

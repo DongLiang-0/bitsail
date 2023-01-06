@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bytedance.bitsail.connector.selectdb.sink.streamload;
+package com.bytedance.bitsail.connector.selectdb.sink.uploadload;
 
 import com.bytedance.bitsail.connector.selectdb.config.SelectdbExecutionOptions;
 import com.bytedance.bitsail.connector.selectdb.config.SelectdbOptions;
@@ -51,8 +51,8 @@ import java.util.concurrent.TimeUnit;
 
 import static org.apache.commons.httpclient.HttpStatus.SC_OK;
 
-public class SelectdbStreamLoad {
-  private static final Logger LOG = LoggerFactory.getLogger(SelectdbStreamLoad.class);
+public class SelectdbUploadLoad {
+  private static final Logger LOG = LoggerFactory.getLogger(SelectdbUploadLoad.class);
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static final String UPLOAD_URL_PATTERN = "http://%s/copy/upload";
   private static final int UPLOAD_SUCCESS_CODE = 307;
@@ -71,7 +71,7 @@ public class SelectdbStreamLoad {
   private String fileName;
   private final List<String> fileList = new CopyOnWriteArrayList<>();
 
-  public SelectdbStreamLoad(SelectdbExecutionOptions executionOptions, SelectdbOptions selectdbOptions) {
+  public SelectdbUploadLoad(SelectdbExecutionOptions executionOptions, SelectdbOptions selectdbOptions) {
     this.hostPort = selectdbOptions.getLoadUrl();
     this.executionOptions = executionOptions;
     this.uploadUrl = String.format(UPLOAD_URL_PATTERN, hostPort);
@@ -206,7 +206,7 @@ public class SelectdbStreamLoad {
   }
 
   @VisibleForTesting
-  public SelectdbStreamLoad() {
+  public SelectdbUploadLoad() {
   }
 }
 

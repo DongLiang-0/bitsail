@@ -20,7 +20,7 @@ import com.bytedance.bitsail.connector.selectdb.committer.SelectdbCommittable;
 import com.bytedance.bitsail.connector.selectdb.config.SelectdbExecutionOptions;
 import com.bytedance.bitsail.connector.selectdb.config.SelectdbOptions;
 import com.bytedance.bitsail.connector.selectdb.sink.SelectdbWriterState;
-import com.bytedance.bitsail.connector.selectdb.sink.streamload.SelectdbStreamLoad;
+import com.bytedance.bitsail.connector.selectdb.sink.uploadload.SelectdbUploadLoad;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,7 +29,7 @@ import java.util.List;
 public abstract class AbstractDorisWriteModeProxy implements Serializable {
   protected SelectdbExecutionOptions selectdbExecutionOptions;
   protected SelectdbOptions selectdbOptions;
-  protected SelectdbStreamLoad selectdbStreamLoad;
+  protected SelectdbUploadLoad selectdbUploadLoad;
 
   public abstract void write(String record) throws IOException;
 
