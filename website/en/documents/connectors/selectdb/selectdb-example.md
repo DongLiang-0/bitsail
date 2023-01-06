@@ -1,25 +1,25 @@
-# Selectdb 连接器配置示例
+# Selectdb connector example
 
-父目录: [selectdb-connector](./selectdb.md)
+Parent documents: [selectdb-connector](./selectdb.md)
 
-## 测试用Selectdb配置
+## Selectdb configuration for testing
 
-假设 Selectdb 集群配置如下:
+Selectdb cluster info
 
 - cluster: test_cluster
 - load_url: `127.0.0.1:1234`
 - jdbc_url: `127.0.0.1:2345`
 
-账户信息为:
+Account:
 
-- 用户: `admin`
-- 密码: `1234567`
+- User: `admin`
+- Password: `1234567`
 
-要写入的库表为:
+Target database and table:
 
 - table_identifier: test_db.test_selectdb_table
 
-该表的建表语句为:
+DDL statement is:
 
 ```sql
 CREATE TABLE `test_db.test_selectdb_table`
@@ -37,9 +37,9 @@ COMMENT 'OLAP'
 DISTRIBUTED BY HASH(`id`) BUCKETS 10;
 ```
 
-## Selectdb 写连接器
+## Selectdb writer
 
-可用下面的配置写入`test_db.test_selectdb_table`表:
+You can use the following configuration to write data for table test_db.test_doris_table.
 
 ```json
 {

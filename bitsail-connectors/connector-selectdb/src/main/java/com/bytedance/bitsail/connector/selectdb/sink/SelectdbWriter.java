@@ -17,11 +17,13 @@
 package com.bytedance.bitsail.connector.selectdb.sink;
 
 import com.bytedance.bitsail.base.connector.writer.v1.Writer;
+import com.bytedance.bitsail.common.BitSailException;
 import com.bytedance.bitsail.common.configuration.BitSailConfiguration;
 import com.bytedance.bitsail.common.row.Row;
 import com.bytedance.bitsail.connector.selectdb.committer.SelectdbCommittable;
 import com.bytedance.bitsail.connector.selectdb.config.SelectdbExecutionOptions;
 import com.bytedance.bitsail.connector.selectdb.config.SelectdbOptions;
+import com.bytedance.bitsail.connector.selectdb.error.SelectdbErrorCode;
 import com.bytedance.bitsail.connector.selectdb.serialize.SelectdbRowSerializer;
 import com.bytedance.bitsail.connector.selectdb.sink.proxy.AbstractDorisWriteModeProxy;
 import com.bytedance.bitsail.connector.selectdb.sink.proxy.SelectdbUpsertProxy;
@@ -42,7 +44,14 @@ public class SelectdbWriter<InputT extends Row> implements Writer<InputT, Select
 
   public SelectdbWriter(BitSailConfiguration writerConfiguration, SelectdbOptions selectdbOptions, SelectdbExecutionOptions selectdbExecutionOptions) {
     this.writerConfiguration = writerConfiguration;
-    this.writeModeProxy = new SelectdbUpsertProxy(selectdbExecutionOptions, selectdbOptions);
+    switch (selectdbExecutionOptions.getWriterMode()) {
+      case STREAMING_UPSERT:
+      case BATCH_UPSERT:
+        this.writeModeProxy = new SelectdbUpsertProxy(selectdbExecutionOptions, selectdbOptions);
+        break;
+      default:
+        throw new BitSailException(SelectdbErrorCode.PROXY_INIT_FAILED, "Write mode is not valid");
+    }
     this.serializer = new SelectdbRowSerializer(selectdbOptions.getColumnInfos(), selectdbOptions.getLoadDataFormat(), selectdbOptions.getFieldDelimiter(),
         selectdbExecutionOptions.getEnableDelete());
   }

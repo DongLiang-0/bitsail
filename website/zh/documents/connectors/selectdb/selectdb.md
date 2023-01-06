@@ -1,10 +1,8 @@
-# Selectdb 连接器
+# SelectDB 连接器
 
 上级文档: [connectors](../README.md)
 
-***BitSail*** Selectdb连接器支持往Selectdb云数仓写数据，其支持的主要功能点如下：
-
-- 使用CopyInto方式写Selectdb表
+SelectDB连接器支持批式往SelectDB云数仓写数据，并提供灵活地写入请求构建。
 
 ## 依赖引入
 
@@ -17,11 +15,11 @@
 </dependency>
 ```
 
-## Selectdb写入
+## SelectDB写入
 
 ### 支持的数据类型
 
-写连接器使用json或者csv格式传输数据，支持的数据类型有:
+Selectdb 写连接器使用json或者csv格式传输数据，支持的数据类型有:
 
 - CHAR
 - VARCHAR
@@ -65,7 +63,7 @@
 | 参数名称                    | 是否必填 | 参数含义                                                                         |
 |:------------------------|:-----|:-----------------------------------------------------------------------------|
 | class                   | 是    | Selectdb写连接器类型, `com.bytedance.bitsail.connector.selectdb.sink.SelectdbSink` |
-| load_url                | 是    | Selectdb cloud 上传数据的 http url                                                |
+| load_url                | 是    | Selectdb上传数据的HTTP URL                                                        |
 | jdbc_url                | 是    | JDBC连接Selectdb的地址                                                            |
 | cluster_name            | 是    | Selectdb cluster 的名称                                                         |
 | user                    | 是    | Selectdb账户                                                                   |
@@ -74,25 +72,22 @@
 
 #### 可选参数
 
-| 参数名称                                    | 是否必填  | 参数枚举值 | 参数含义                                       |
-|:----------------------------------------|:------|:------|:-------------------------------------------|
-| writer_parallelism_num | 否 |       | 指定Doris写并发                                 |
-| sink_flush_interval_ms | 否 | | Upsert模式下的flush间隔, 默认5000 ms               |
-| sink_max_retries | 否 | | 写入的最大重试次数，默认3                              |
-| sink_buffer_size | 否  | | 写入buffer最大值，默认 1048576 bytes (1MB)         |
-| sink_buffer_count | 否 | | 初始化 buffer 的数量，默认为3                        | 
-| sink_enable_delete | 否 | | 是否支持delete事件同步                             |
-| sink_write_mode | 否 | 目前只支持以下几种:<br/>STREAMING_UPSERT<br/>BATCH_UPSERT| 写入模式                                       |
-| stream_load_properties | 否 | | 追加在streamload url后的参数，map<string,string>格式 |
-| load_contend_type | 否 | csv<br/>json | copy-into使用的格式，默认json                      |
-| csv_field_delimiter | 否 | | csv格式的行内分隔符, 默认逗号 ","                      |
-| csv_line_delimiter | 否 | | csv格式的行间分隔符, 默认 "\n"                       |
-
-sink_write_mode的说明如下:
-
-- STREAMING_UPSERT: 流式upsert写入
-- BATCH_UPSERT: 批式upsert写入
+| 参数名称                                    | 是否必填  | 参数枚举值             | 参数含义                                       |
+|:----------------------------------------|:------|:------------------|:-------------------------------------------|
+| writer_parallelism_num | 否 |                   | 指定Selectdb写并发                              |
+| sink_flush_interval_ms | 否 |                   | Upsert模式下的flush间隔, 默认5000 ms               |
+| sink_max_retries | 否 |                   | 写入的最大重试次数，默认3                              |
+| sink_buffer_size | 否  |                   | 写入buffer最大值，默认 1048576 bytes (1MB)         |
+| sink_buffer_count | 否 |                   | 初始化 buffer 的数量，默认为3                        | 
+| sink_enable_delete | 否 |                   | 是否支持delete事件同步                             |
+| sink_write_mode | 否 | 目前仅支持BATCH_UPSERT | 写入模式                                       |
+| stream_load_properties | 否 |                   | 追加在streamload url后的参数，map<string,string>格式 |
+| load_contend_type | 否 | csv<br/>json      | copy-into使用的格式，默认json                      |
+| csv_field_delimiter | 否 |                   | csv格式的行内分隔符, 默认逗号 ","                      |
+| csv_line_delimiter | 否 |                   | csv格式的行间分隔符, 默认 "\n"                       |
 
 ## 相关文档
 
 配置示例文档: [selectdb-connector-example](./selectdb-example.md)
+
+SelectDB 云数仓：[selectdb](https://cn.selectdb.com/)
